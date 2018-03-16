@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">bmi</string>
+    <string name="height_m">Height[m]</string>
+    <string name="mass_kg">Mass[kg]</string>
+    <string name="button">Button</string>
+    <string name="bmi">BMI</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="title_activity_photo">Photo</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="a_picture_from_tsutomu_nihei">a picture from Tsutomu Nihei</string>
+    <string name="oAutorze">autor: Piotr Herud\nzbyt leniwy żeby wrzucić dłuższy opis</string>
+
+    <string name="title_activity_photo2">Photo2</string>
+    <string name="height_inch">Height [inch]</string>
+    <string name="mass_lbs">Mass [lbs]</string>
+    <string name="bmi_screen">bmi_screen</string>
+    <string name="item">Item</string>
+    <string name="action_settings">testVal</string>
+    <string name="switch1">Switch units</string>
+    <string name="about">about</string>
+    <string name="yourBmi">BMI:</string>
+    <string name="refresh">Refresh</string>
+</resources>

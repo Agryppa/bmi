@@ -21,6 +21,12 @@ public class ExampleUnitTest {
         double bmiVal = bmi.calculate();
         assertEquals(20.761, bmiVal, 0.001);
     }
+    @Test
+    public void for_valid_data_CATEGORY_is_returned_correctly() {
+        BmiObj bmi = new BmiObj(60, 1.70, true);
+        BmiCategory category=bmi.getCategory();
+        assertEquals(BmiCategory.NORMAL, category);
+    }
     @Test(expected = IllegalArgumentException.class)
     public void arguments_equal_0()throws Exception
     {

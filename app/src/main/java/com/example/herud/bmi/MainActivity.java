@@ -19,14 +19,19 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button mButton;
-    EditText height;
-    EditText mass;
+    private static String massSave = "mSave";
+    private static String heightSave = "hSave";
+    private static String unitSave = "uSave";
 
-    Switch switch1;
-    TextView hText;
-    TextView mText;
-    boolean isMetric=true;
+    private Button mButton;
+    private EditText height;
+    private EditText mass;
+
+    private Switch unitSwitch;
+    private TextView hText;
+    private TextView mText;
+    private boolean isMetric=true;
+
 
 
 
@@ -43,15 +48,15 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onStart();
         SharedPreferences sp = this.getPreferences(Context.MODE_PRIVATE);
-        String mTemp = sp.getString("mSave", "");
-        String hTemp = sp.getString("hSave", "");
-        Boolean uTemp=sp.getBoolean("uSave", false);
+        String mTemp = sp.getString(massSave, "");
+        String hTemp = sp.getString(heightSave, "");
+        Boolean uTemp=sp.getBoolean(unitSave, false);
         if(mTemp!=null)
             mass.setText(mTemp);
         if(hTemp!=null)
             height.setText(hTemp);
         if(uTemp!=null)
-            switch1.setChecked(uTemp);
+            unitSwitch.setChecked(uTemp);
     }
 
     @Override
@@ -76,12 +81,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_save:
 
                 SharedPreferences sp = this.getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor sedt = sp.edit();
+                SharedPreferences.Editor spEditor = sp.edit();
 
-                sedt.putString("mSave", mass.getText().toString());
-                sedt.putString("hSave", height.getText().toString());
-                sedt.putBoolean("uSave", switch1.isChecked());
-                sedt.commit();
+                spEditor.putString(massSave, mass.getText().toString());
+                spEditor.putString(heightSave, height.getText().toString());
+                spEditor.putBoolean(unitSave, unitSwitch.isChecked());
+                spEditor.commit();
                 break;
             default:
                 break;
@@ -89,28 +94,46 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        Toolbar myToolbar = findViewById(R.id.toolbar2);
-        setSupportActionBar(myToolbar);
-
-
+    private void initFields()
+    {
         mass = findViewById(R.id.editText);
         height = findViewById(R.id.editText2);
-
         mButton = findViewById(R.id.button);
         hText=findViewById(R.id.textView2);
         mText=findViewById(R.id.textView);
+        unitSwitch=findViewById(R.id.switch1);
+        Toolbar myToolbar = findViewById(R.id.toolbar2);
+        setSupportActionBar(myToolbar);
+    }
 
+    View.OnClickListener buttonListener()
+    {
+        View.OnClickListener listener=new View.OnClickListener()
+        {
+            public void onClick(View view)
+            {
+                if(!(mass.getText().toString().length()==0||height.getText().toString().length()==0)) {
+                    double massVal = Double.valueOf(mass.getText().toString());
+                    double heightVal = Double.valueOf(height.getText().toString());
+                    Intent intent = new Intent(MainActivity.this, BmiScreen.class);
 
-        switch1=findViewById(R.id.switch1);
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    BmiObj bmiO=new BmiObj(massVal,heightVal, isMetric);
+                    Double bmiVal=null;
+                    try {
+                        bmiVal = bmiO.calculate();
+
+                    }catch(IllegalArgumentException e){}
+                    if(bmiVal!=null)
+                        BmiScreen.start(MainActivity.this,bmiVal, bmiO.getCategory());
+                }
+
+            }
+        };
+        return listener;
+    }
+    CompoundButton.OnCheckedChangeListener switchListener()
+    {
+        CompoundButton.OnCheckedChangeListener listener=new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
@@ -124,32 +147,23 @@ public class MainActivity extends AppCompatActivity {
                     mText.setText(R.string.mass_kg);
                 }
             }
-        });
+        };
 
-
-        mButton.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    public void onClick(View view)
-                    {
-                        if(!(mass.getText().toString().length()==0||height.getText().toString().length()==0)) {
-                            double m = Double.valueOf(mass.getText().toString());
-                            double h = Double.valueOf(height.getText().toString());
-                            Intent intent = new Intent(MainActivity.this, BmiScreen.class);
-                            intent.putExtra("m", m);
-                            intent.putExtra("h", h);
-                            intent.putExtra("unit",isMetric);
-
-
-                            startActivity(intent);
-                        }
-
-                    }
-                });
+        return listener;
+    }
 
 
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initFields();
+
+        unitSwitch.setOnCheckedChangeListener(switchListener());
+        mButton.setOnClickListener(buttonListener());
 
     }
 }
